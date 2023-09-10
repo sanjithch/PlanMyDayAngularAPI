@@ -1,0 +1,22 @@
+<div class="center-content top-height">
+    <div style="display: flex;">
+        <app-place [placeType]="'To'" style="flex-grow: 1;"> </app-place>
+        <span class="spacer" style="flex-grow: 2;"></span>
+        <app-place [placeType]="'From'" style="flex-grow: 1;"> </app-place>
+    </div>
+    <div style="display: flex;" class="my-4">
+        <mat-form-field class="form-control mr-4">
+            <select matNativeControl required>
+                <option value="round-trip">Round Trip</option>
+                <option value="one-way">One Way</option>
+            </select>
+        </mat-form-field>
+        <label for="Departure" class="form-label h4">Departure:</label>
+        <input type="date" id="Departure" name="Departure" class="form-control mx-4"/>
+        <label for="Return" class="form-label h4">Return:</label>
+        <input type="date" id="Return" name="Return" class="form-control ml-4"/>
+    </div>
+    <div class="center-content">
+        <button type="submit" class="btn form-control btn-primary">Explore</button>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<span>
+    <h3> <label for = {{placeType}} class="form-label"> {{ placeType }} </label> </h3>
+    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control"/>
+    <div>
+        {{ fetchAddress() }}
+    </div>
+</span>

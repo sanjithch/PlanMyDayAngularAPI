@@ -1,0 +1,10 @@
+.center-content {
+    margin: auto;
+    width: 60%;
+    text-align: center;
+    justify-content: center;
+}
+
+.top-height{
+    margin-top: 10%;
+}
