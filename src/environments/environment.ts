@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  uberAddressFetchURL: 'https://localhost:7066/api/Uber/getAddresses?q=',
+  uberAddressFetchURL: 'https://localhost:7066/api/Uber/getAddresses/',
 };
 
 /*

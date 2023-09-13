@@ -1,7 +1,8 @@
 <span>
-    <h3> <label for = {{placeType}} class="form-label"> {{ placeType }} </label> </h3>
-    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control"/>
-    <div>
-        {{ fetchAddress() }}
-    </div>
+    <h3 style="width: 300px;"> <label for = {{placeType}} class="form-label"> {{ placeType }} </label> </h3>
+    <!-- <input id={{placeType}} class="form-control" [formControl]="searchControl"/>  -->
+    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control" style="width: 300px;">
+    <select class="form-control" (focus)="getAddresses()" style="width: 300px;">
+        <option *ngFor="let suggestion of foraddresses" > {{ suggestion }}</option>
+    </select>
 </span>

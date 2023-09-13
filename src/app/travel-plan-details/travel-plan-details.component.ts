@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TravelDetails } from '../Models/TravelDetails';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -6,8 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./travel-plan-details.component.css']
 })
 export class TravelPlanDetailsComponent implements OnInit {
+  traveldetails!: TravelDetails;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

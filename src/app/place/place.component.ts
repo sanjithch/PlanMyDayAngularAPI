@@ -1,5 +1,6 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -11,6 +12,8 @@ import { environment } from 'src/environments/environment';
 export class PlaceComponent implements OnInit {
   @Input() placeType : any;
   address: string = " ";
+  foraddresses = [""];
+  searchControl = new FormControl();
 
   constructor(private http : HttpClient) { }
 
@@ -19,11 +22,16 @@ export class PlaceComponent implements OnInit {
 
   async fetchAddress(){
     console.log(this.address);
-    // var addresses: Observable<string[]>;
-    // addresses = await this.http.get<string[]>(environment.uberAddressFetchURL+this.address);
-    // setTimeout(function(){
-    //   console.log(addresses)
-    // }, 2000);
+    var addresses: any;
+    await this.http.get<string[]>(environment.uberAddressFetchURL + this.address).subscribe(data => this.foraddresses = data);
+    setTimeout(() =>{
+      console.log(this.foraddresses);
+    }, 500);
+  }
+
+  getAddresses(){
+    console.log("hii");
+    return this.foraddresses;
   }
 
 }

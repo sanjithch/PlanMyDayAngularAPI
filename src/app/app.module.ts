@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
 import { TravelPlanDetailsComponent } from './travel-plan-details/travel-plan-details.component';
 import { PlaceComponent } from './place/place.component';
 import { from } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,7 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule, MatInputModule, 
     MatDatepickerModule, MatNativeDateModule, 
     HttpClientModule, BrowserAnimationsModule,
-    FormsModule
+    FormsModule, ReactiveFormsModule
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]
