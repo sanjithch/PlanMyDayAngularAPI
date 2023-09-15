@@ -1,7 +1,6 @@
-export interface TravelDetails {
-    to: "";
-    from: "";
-    travelType: "",
-    departure: "",
-    return: ""
+import { AddressDetails } from "./Location"
+
+export class TravelDetails {
+     to: AddressDetails = new AddressDetails
+    from: AddressDetails = new AddressDetails
 }

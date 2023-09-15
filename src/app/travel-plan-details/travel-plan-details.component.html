@@ -1,8 +1,8 @@
 <div class="center-content top-height">
     <div style="display: flex;">
-        <app-place [placeType]="'To'" style="flex-grow: 1;"> </app-place>
+        <app-place [placeType]="'From'" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
         <span class="spacer" style="flex-grow: 2;"></span>
-        <app-place [placeType]="'From'" style="flex-grow: 1;"> </app-place>
+        <app-place [placeType]="'To'" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
     </div>
     <div style="display: flex;" class="my-4">
         <mat-form-field class="form-control mr-4">
@@ -17,6 +17,12 @@
         <input type="date" id="Return" name="Return" class="form-control ml-4"/> -->
     </div>
     <div class="center-content">
-        <button type="submit" class="btn form-control btn-primary">Explore</button>
+        <button type="submit" (click)="onSubmit()" class="btn form-control btn-primary">Explore</button>
+    </div>
+
+    <div *ngIf="uberFaresResponse !== undefined">
+        <div *ngFor="let product of uberFaresResponse.data.products.tiers[0].products" >
+            {{ product.fare}}
+        </div>
     </div>
 </div>
