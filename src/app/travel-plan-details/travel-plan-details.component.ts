@@ -4,6 +4,7 @@ import { AddressDetails } from '../Models/Location';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
+import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -14,10 +15,19 @@ export class TravelPlanDetailsComponent implements OnInit {
   traveldetails: any;
    uberFaresResponse : ResponseFromUberFares | undefined;
    body : requestBodyForFares  = new requestBodyForFares;
+   lyftFares: ResponseFromLyftFares | undefined;
+
+   sortByFilter = ['price', 'duriation', 'Time Of Arrival'];
 
   constructor(private httpclient : HttpClient) {
    
   }
+
+  // sortFares(){
+  //   //for uber
+
+
+  // }
 
   ngOnInit(): void {
     this.traveldetails = new TravelDetails();
@@ -51,11 +61,18 @@ export class TravelPlanDetailsComponent implements OnInit {
       console.log("my object...");
       console.log(this.uberFaresResponse);
     })
+
+    await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {
+      this.lyftFares = data
+    })
+
     setTimeout(()=>{
+      console.log("........Uber Fares......");
       console.log(this.uberFaresResponse);
+      console.log("........Lyft Fares......");
+      console.log(this.lyftFares);
     }, 2000);
   }
-
 }
 
 export class requestBodyForFares{

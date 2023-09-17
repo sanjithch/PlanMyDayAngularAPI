@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   uberAddressFetchURL: 'https://localhost:7066/api/Uber/getAddresses/',
   uberCoordinatesFetchURL: 'https://localhost:7066/api/Uber/selectingAdress/',
-  uberFares: 'https://localhost:7066/api/Uber/getFaresFromUber'
+  uberFares: 'https://localhost:7066/api/Uber/getFaresFromUber',
+  lyftFares: 'https://localhost:7066/api/Uber/getFaresFromLyft'
 };
 
 /*

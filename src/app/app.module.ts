@@ -13,12 +13,16 @@ import { TravelPlanDetailsComponent } from './travel-plan-details/travel-plan-de
 import { PlaceComponent } from './place/place.component';
 import { from } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RideDetailsComponent } from './ride-details/ride-details.component';
+import { LyftPricesComponent } from './lyft-prices/lyft-prices.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TravelPlanDetailsComponent,
-    PlaceComponent
+    PlaceComponent,
+    RideDetailsComponent,
+    LyftPricesComponent
   ],
   imports: [
     BrowserModule,
