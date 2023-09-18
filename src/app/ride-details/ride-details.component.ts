@@ -14,7 +14,9 @@ export class RideDetailsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
+  getMinutes(val: number){
+    return Math.round(val/60);
+  }
 
 }
 

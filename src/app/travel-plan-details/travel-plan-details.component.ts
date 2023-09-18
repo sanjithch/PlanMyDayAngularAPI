@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
 import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
+import { FilterMode } from '../Models/FilterModel';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -16,17 +17,13 @@ export class TravelPlanDetailsComponent implements OnInit {
    uberFaresResponse : ResponseFromUberFares | undefined;
    body : requestBodyForFares  = new requestBodyForFares;
    lyftFares: ResponseFromLyftFares | undefined;
+   finalUberRides: FilterMode[] | undefined 
 
-   sortByFilter = ['price', 'duriation', 'Time Of Arrival'];
+   sortByFilter = ['price', 'duriation'];
 
   constructor(private httpclient : HttpClient) {
    
   }
-
-  // sortFares(){
-  //   //for uber
-
-
   // }
 
   ngOnInit(): void {
@@ -56,10 +53,10 @@ export class TravelPlanDetailsComponent implements OnInit {
     console.log("body for fares");
     console.log(this.body);
     await this.httpclient.post<ResponseFromUberFares>(environment.uberFares, this.body).subscribe(data => {
-      console.log(data);
+      // console.log(data);
       this.uberFaresResponse = data;
-      console.log("my object...");
-      console.log(this.uberFaresResponse);
+      // console.log("my object...");
+      // console.log(this.uberFaresResponse);
     })
 
     await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {
@@ -71,9 +68,39 @@ export class TravelPlanDetailsComponent implements OnInit {
       console.log(this.uberFaresResponse);
       console.log("........Lyft Fares......");
       console.log(this.lyftFares);
-    }, 2000);
+      
+    }, 5000);
   }
+
+  sortRidesBy(){
+    var selectElement = document.getElementById("sortBy") as HTMLSelectElement;
+    var sortingBy = selectElement.value;
+    console.log("....sorting by..."+sortingBy);
+    if(sortingBy===this.sortByFilter[0]){
+      //for uber
+      var count = this.uberFaresResponse?.data.products.tiers[0].products.length;
+      var temp ;
+      if(count){
+        console.log("......sorting....");
+        for(var i=0;i<count;i++){
+          for(var j=i+1;j<count;j++){
+            
+          }
+        }
+      }
+
+      //for lyft
+      
+    }
+    else if(sortingBy===this.sortByFilter[1]){
+
+    }
+  }
+
+
 }
+
+
 
 export class requestBodyForFares{
     "destinations": [
