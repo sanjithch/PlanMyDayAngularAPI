@@ -70,11 +70,11 @@ export class TravelPlanDetailsComponent implements OnInit {
     if(sortingBy==='price'){
       console.log("......sorting....based....price.....");
         this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b)=>{
-         return a.fare.localeCompare(b.fare);
+         return parseFloat(a.fare.substring(1)) - parseFloat(b.fare.substring(1));
         })
 
         this.lyftFares?.offers.sort((a,b)=>{
-          return a.cost_estimate.estimated_cost_cents_max.localeCompare(a.cost_estimate.estimated_cost_cents_max);
+          return parseInt(a.cost_estimate.estimated_cost_cents_max) - parseInt(b.cost_estimate.estimated_cost_cents_max);
         })
     }
     else if(sortingBy==='duriation'){
@@ -84,7 +84,7 @@ export class TravelPlanDetailsComponent implements OnInit {
        )
 
       this.lyftFares?.offers.sort((a,b)=>{
-        return a.ride_travel_details.dropoff_estimate.duration_range.duration_ms.localeCompare(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
+        return parseInt(a.ride_travel_details.dropoff_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
       })
     }
   }
