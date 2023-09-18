@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
 import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
 import { FilterMode } from '../Models/FilterModel';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -17,14 +18,9 @@ export class TravelPlanDetailsComponent implements OnInit {
    uberFaresResponse : ResponseFromUberFares | undefined;
    body : requestBodyForFares  = new requestBodyForFares;
    lyftFares: ResponseFromLyftFares | undefined;
-   finalUberRides: FilterMode[] | undefined 
-
    sortByFilter = ['price', 'duriation'];
 
-  constructor(private httpclient : HttpClient) {
-   
-  }
-  // }
+  constructor(private httpclient : HttpClient) {}
 
   ngOnInit(): void {
     this.traveldetails = new TravelDetails();
@@ -48,15 +44,10 @@ export class TravelPlanDetailsComponent implements OnInit {
     = [{"latitude" : this.traveldetails.from.data.lat, "longitude" : this.traveldetails.from.data.long}];
     this.body.pickup = 
     {"latitude" : this.traveldetails.to.data.lat, "longitude" : this.traveldetails.to.data.long};
-    //  this.traveldetails.to.data.lat;
-    // this.body.pickup.longitude = this.traveldetails.to.data.long;
     console.log("body for fares");
     console.log(this.body);
     await this.httpclient.post<ResponseFromUberFares>(environment.uberFares, this.body).subscribe(data => {
-      // console.log(data);
       this.uberFaresResponse = data;
-      // console.log("my object...");
-      // console.log(this.uberFaresResponse);
     })
 
     await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {
@@ -68,32 +59,33 @@ export class TravelPlanDetailsComponent implements OnInit {
       console.log(this.uberFaresResponse);
       console.log("........Lyft Fares......");
       console.log(this.lyftFares);
-      
     }, 5000);
   }
 
+ 
   sortRidesBy(){
     var selectElement = document.getElementById("sortBy") as HTMLSelectElement;
     var sortingBy = selectElement.value;
     console.log("....sorting by..."+sortingBy);
-    if(sortingBy===this.sortByFilter[0]){
-      //for uber
-      var count = this.uberFaresResponse?.data.products.tiers[0].products.length;
-      var temp ;
-      if(count){
-        console.log("......sorting....");
-        for(var i=0;i<count;i++){
-          for(var j=i+1;j<count;j++){
-            
-          }
-        }
-      }
+    if(sortingBy==='price'){
+      console.log("......sorting....based....price.....");
+        this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b)=>{
+         return a.fare.localeCompare(b.fare);
+        })
 
-      //for lyft
-      
+        this.lyftFares?.offers.sort((a,b)=>{
+          return a.cost_estimate.estimated_cost_cents_max.localeCompare(a.cost_estimate.estimated_cost_cents_max);
+        })
     }
-    else if(sortingBy===this.sortByFilter[1]){
+    else if(sortingBy==='duriation'){
+      console.log("......sorting....based....duriation.....");
+      this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
+       a.estimatedTripTime - b.estimatedTripTime
+       )
 
+      this.lyftFares?.offers.sort((a,b)=>{
+        return a.ride_travel_details.dropoff_estimate.duration_range.duration_ms.localeCompare(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
+      })
     }
   }
 
@@ -114,3 +106,21 @@ export class requestBodyForFares{
       "longitude": 0
     }
 }
+
+ // mapUberRides(){
+  //   console.log('....mapping uber rides');
+  //   this.uberFaresResponse?.data.products.tiers[0].products.map(data => {
+  //     console.log(data.fare + "....." + parseFloat(data.fare.substring(1)));
+  //     var temp = new FilterMode(parseFloat(data.fare.substring(1)), data.displayName, data.estimatedTripTime, 'Uber');
+  //     this.finalUberRides.push(temp);
+  //   })
+  //   console.log(this.finalUberRides);
+  // }
+  // mapLyftRides(){
+  //   console.log('....adding lyft rides');
+  //   this.lyftFares?.offers.map(data => {
+  //     var temp = new FilterMode(parseFloat(data.cost_estimate.estimated_cost_cents_max)/100, data.offer_product_id, parseInt(data.ride_travel_details.dropoff_estimate.duration_range.duration_ms)/60000, 'lyft');
+  //     this.finalUberRides.push(temp);
+  //   })
+  //   console.log(this.finalUberRides);
+  // }

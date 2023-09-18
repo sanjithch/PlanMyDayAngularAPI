@@ -1,7 +1,5 @@
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddressDetails } from '../Models/Location';
 

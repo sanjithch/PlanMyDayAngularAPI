@@ -21,19 +21,18 @@
     </div>
     <div style="display: flex;" class="my-4">
         <h4 class="mx-4">Sort By </h4>
-        <select id="sortBy" (change)="sortRidesBy()" style="max-width: 300px;" class="form-control">
+        <select id="sortBy" (click)="sortRidesBy()" style="max-width: 300px;" class="form-control">
             <option *ngFor="let filter of sortByFilter" [value]="filter" >{{ filter }}</option>
         </select>
     </div>
 
     <div style="display: flex;">
-        <div *ngIf="uberFaresResponse !== undefined">
-            <h3>Uber</h3>
+        <div *ngIf="uberFaresResponse !== undefined" class="border border-dark" style="min-width: 450px;">
+            <h2>Uber</h2>
             <app-ride-details *ngFor="let product of uberFaresResponse.data.products.tiers[0].products" [rideDetails] ="product" ></app-ride-details>
         </div>
-        <div class="spacer" style="width: 100px;"></div>
-        <div *ngIf="lyftFares !== undefined">
-            <h3>Lyft</h3>
+        <div *ngIf="lyftFares !== undefined" class="border border-dark" style="min-width: 450px;">
+            <h2>Lyft</h2>
             <app-lyft-prices *ngFor="let offer of lyftFares?.offers" [lyftRideDetails]="offer" ></app-lyft-prices>
         </div>
     </div>
