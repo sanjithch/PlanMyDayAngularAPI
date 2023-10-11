@@ -5,8 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
 import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
-import { FilterMode } from '../Models/FilterModel';
-import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -15,10 +13,11 @@ import { filter } from 'rxjs';
 })
 export class TravelPlanDetailsComponent implements OnInit {
   traveldetails: any;
-   uberFaresResponse : ResponseFromUberFares | undefined;
-   body : requestBodyForFares  = new requestBodyForFares;
-   lyftFares: ResponseFromLyftFares | undefined;
-   sortByFilter = ['price', 'duriation'];
+  uberFaresResponse : ResponseFromUberFares | undefined;
+  body : requestBodyForFares  = new requestBodyForFares;
+  lyftFares: ResponseFromLyftFares | undefined;
+  sortByFilter = ['price', 'duriation','Time of Arrival'];
+  noAvailableDeals: any;
 
   constructor(private httpclient : HttpClient) {}
 
@@ -39,30 +38,31 @@ export class TravelPlanDetailsComponent implements OnInit {
 
   async onSubmit(){
     console.log(this.traveldetails);
-    
-    this.body.destinations 
-    = [{"latitude" : this.traveldetails.from.data.lat, "longitude" : this.traveldetails.from.data.long}];
-    this.body.pickup = 
-    {"latitude" : this.traveldetails.to.data.lat, "longitude" : this.traveldetails.to.data.long};
-    console.log("body for fares");
-    console.log(this.body);
-    await this.httpclient.post<ResponseFromUberFares>(environment.uberFares, this.body).subscribe(data => {
-      this.uberFaresResponse = data;
-    })
+    if(!this.traveldetails){
+      this.noAvailableDeals = true;
+    }
+    else{
+      this.body.destinations = [{"latitude" : this.traveldetails.from.data.lat, "longitude" : this.traveldetails.from.data.long}];
+      this.body.pickup = {"latitude" : this.traveldetails.to.data.lat, "longitude" : this.traveldetails.to.data.long};
+      console.log("body for fares");
+      console.log(this.body);
+      await this.httpclient.post<ResponseFromUberFares>(environment.uberFares, this.body).subscribe(data => {
+        this.uberFaresResponse = data;
+      })
 
-    await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {
-      this.lyftFares = data
-    })
+      await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {
+        this.lyftFares = data
+      })
 
-    setTimeout(()=>{
-      console.log("........Uber Fares......");
-      console.log(this.uberFaresResponse);
-      console.log("........Lyft Fares......");
-      console.log(this.lyftFares);
-    }, 5000);
+      setTimeout(()=>{
+        console.log("........Uber Fares......");
+        console.log(this.uberFaresResponse);
+        console.log("........Lyft Fares......");
+        console.log(this.lyftFares);
+      }, 5000);
+    }
   }
-
- 
+  
   sortRidesBy(){
     var selectElement = document.getElementById("sortBy") as HTMLSelectElement;
     var sortingBy = selectElement.value;
@@ -87,8 +87,17 @@ export class TravelPlanDetailsComponent implements OnInit {
         return parseInt(a.ride_travel_details.dropoff_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
       })
     }
-  }
+    else if(sortingBy==='Time of Arrival'){
+      console.log("......sorting....based....Time of Arrival.....");
+      this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
+       parseInt(a.etaStringShort.substring(0, a.etaStringShort.length-5)) - parseInt(b.etaStringShort.substring(0, b.etaStringShort.length-5))
+       )
 
+      this.lyftFares?.offers.sort((a,b)=>{
+        return parseInt(a.ride_travel_details.pickup_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.pickup_estimate.duration_range.duration_ms);
+      })
+    }
+  }
 
 }
 

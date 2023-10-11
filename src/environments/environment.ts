@@ -7,7 +7,8 @@ export const environment = {
   uberAddressFetchURL: 'https://localhost:7066/api/Uber/getAddresses/',
   uberCoordinatesFetchURL: 'https://localhost:7066/api/Uber/selectingAdress/',
   uberFares: 'https://localhost:7066/api/Uber/getFaresFromUber',
-  lyftFares: 'https://localhost:7066/api/Uber/getFaresFromLyft'
+  uberCurrentLocation: 'https://localhost:7066/api/Uber/getMyCurrentLocation',
+  lyftFares: 'https://localhost:7066/api/Lyft/getFaresFromLyft'
 };
 
 /*

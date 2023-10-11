@@ -1,6 +1,7 @@
 <span>
-    <h3 style="width: 300px;"> <label for = {{placeType}} class="form-label"> {{ placeType }} </label> </h3>
-    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control" style="width: 300px;">
+    <h3 style="width: 300px;"> <label for = {{placeType}} class="form-label"> {{ placeType }} </label>  </h3>
+    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control" style="width: 280px;">
+    <span (click)="getMyLocation()">Loc</span>
     
     <select class="form-control" id={{getId()}} (click)="getAddressesCoordinates()" style="width: 300px;">
         <option *ngFor="let suggestion of foraddresses" value={{suggestion.id}}> {{ suggestion.address }}</option>

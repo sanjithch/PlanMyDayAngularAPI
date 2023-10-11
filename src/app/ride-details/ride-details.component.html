@@ -1,6 +1,7 @@
 <div *ngIf="rideDetails" class="my-4 border border-success">
    <h5>{{ rideDetails.displayName }} for {{ rideDetails.fare }}</h5>
    <h6>Travel Time - {{getMinutes(rideDetails.estimatedTripTime)}} - mins</h6>
+   <h6>Time To Arriaval- {{ rideDetails.etaStringShort }}</h6>
 </div>
 
 

@@ -36,4 +36,6 @@
             <app-lyft-prices *ngFor="let offer of lyftFares?.offers" [lyftRideDetails]="offer" ></app-lyft-prices>
         </div>
     </div>
+
+    <h2 *ngIf="!uberFaresResponse && !lyftFares && noAvailableDeals">No Rides Available</h2>
 </div>

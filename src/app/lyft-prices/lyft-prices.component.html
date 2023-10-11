@@ -1,4 +1,5 @@
 <div *ngIf="lyftRideDetails" class="my-4 border border-success">
     <h5>{{ lyftRideDetails.offer_product_id }} for {{ getDollars(lyftRideDetails.cost_estimate.estimated_cost_cents_max)}}</h5>
     <h6>Travel Time - {{ getMinutes(lyftRideDetails.ride_travel_details.dropoff_estimate.duration_range.duration_ms) }}</h6>
+    <h6>Time of Arriaval - {{getMinutes(lyftRideDetails.ride_travel_details.pickup_estimate.duration_range.duration_ms)}}</h6>
  </div>
