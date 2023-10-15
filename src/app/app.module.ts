@@ -15,6 +15,8 @@ import { from } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RideDetailsComponent } from './ride-details/ride-details.component';
 import { LyftPricesComponent } from './lyft-prices/lyft-prices.component';
+import { TotalRouteComponent } from './total-route/total-route.component';
+import { ROUTES, Router, RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { LyftPricesComponent } from './lyft-prices/lyft-prices.component';
     TravelPlanDetailsComponent,
     PlaceComponent,
     RideDetailsComponent,
-    LyftPricesComponent
+    LyftPricesComponent,
+    TotalRouteComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +33,11 @@ import { LyftPricesComponent } from './lyft-prices/lyft-prices.component';
     MatFormFieldModule, MatInputModule, 
     MatDatepickerModule, MatNativeDateModule, 
     HttpClientModule, BrowserAnimationsModule,
-    FormsModule, ReactiveFormsModule
+    FormsModule, ReactiveFormsModule,
+    RouterModule.forRoot([
+      {path: '', component: TravelPlanDetailsComponent},
+      {path: 'includes-airport', component: TotalRouteComponent},
+    ])
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]

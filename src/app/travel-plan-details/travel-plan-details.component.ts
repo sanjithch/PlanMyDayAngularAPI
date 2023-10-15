@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TravelDetails } from '../Models/TravelDetails';
 import { AddressDetails } from '../Models/Location';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
+import { Product, ResponseFromUberFares } from '../Models/ResponseFromUberFares';
 import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
 
 @Component({
@@ -13,11 +13,18 @@ import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
 })
 export class TravelPlanDetailsComponent implements OnInit {
   traveldetails: any;
+  @Input() pickUp = 'From';
+  @Input() Destination = 'To';
+
+  //responses from uber
+  pickUpNearByAirport : ResponseFromUberFares | undefined;
+  destinationNearByAirport: ResponseFromUberFares | undefined;
   uberFaresResponse : ResponseFromUberFares | undefined;
+
   body : requestBodyForFares  = new requestBodyForFares;
-  lyftFares: ResponseFromLyftFares | undefined;
+  lyftFares : ResponseFromLyftFares | undefined;
   sortByFilter = ['price', 'duriation','Time of Arrival'];
-  noAvailableDeals: any;
+  noAvailableDeals = false;
 
   constructor(private httpclient : HttpClient) {}
 
@@ -37,6 +44,10 @@ export class TravelPlanDetailsComponent implements OnInit {
   }
 
   async onSubmit(){
+    this.getMeOffers();
+  }
+
+  async getMeOffers(){
     console.log(this.traveldetails);
     if(!this.traveldetails){
       this.noAvailableDeals = true;
@@ -59,7 +70,16 @@ export class TravelPlanDetailsComponent implements OnInit {
         console.log(this.uberFaresResponse);
         console.log("........Lyft Fares......");
         console.log(this.lyftFares);
+        this.checkForOffers();
       }, 5000);
+    }
+  }
+
+  checkForOffers(){
+    if(!this.uberFaresResponse?.data){
+      this.lyftFares = undefined;
+      this.uberFaresResponse = undefined;
+      this.noAvailableDeals = true;
     }
   }
   
@@ -100,8 +120,6 @@ export class TravelPlanDetailsComponent implements OnInit {
   }
 
 }
-
-
 
 export class requestBodyForFares{
     "destinations": [

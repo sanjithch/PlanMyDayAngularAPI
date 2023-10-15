@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
+import { TravelPlanDetailsComponent } from './travel-plan-details/travel-plan-details.component';
+import { TotalRouteComponent } from './total-route/total-route.component';
+import { Routes } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +23,8 @@ export class AppComponent {
 
     // console.log(this.response);
   }
+
+
   
 }
 
@@ -30,3 +35,4 @@ export interface WeatherForecast
    TemperatureF : number;
    Summary : string;
 }
+

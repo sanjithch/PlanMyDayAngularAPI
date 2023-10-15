@@ -1,26 +1,17 @@
 <div class="center-content top-height">
     <div style="display: flex;">
-        <app-place [placeType]="'From'" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
+        <app-place [placeType]="pickUp" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
         <span class="spacer" style="flex-grow: 2;"></span>
-        <app-place [placeType]="'To'" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
+        <app-place [placeType]="Destination" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
     </div>
-    <!-- <div style="display: flex;" class="my-4">
-        <mat-form-field class="form-control mr-4">
-            <select matNativeControl required>
-                <option value="one-way" selected>One Way</option>
-                <option value="round-trip">Round Trip</option>
-            </select>
-        </mat-form-field>
-        <label for="Departure" class="form-label h4">Departure:</label>
-        <input type="date" id="Departure" name="Departure" class="form-control mx-4"/>
-        <label for="Return" class="form-label h4">Return:</label>
-        <input type="date" id="Return" name="Return" class="form-control ml-4"/>
-    </div> -->
-    <div class="center-content my-4">
-        <button type="submit" (click)="onSubmit()" class="btn form-control btn-primary">Explore</button>
+
+    <div *ngIf="this.noAvailableDeals"> 
+       <h4 class="text-warning mx-4"> No Direct Rides Available Select Options for connecting flight </h4> 
     </div>
+    
     <div style="display: flex;" class="my-4">
-        <h4 class="mx-4">Sort By </h4>
+        <button type="submit" (click)="onSubmit()" class="btn form-control btn-primary" >Explore</button>
+        <h4 class="mx-4" style="min-width: 150px">Sort By </h4>
         <select id="sortBy" (click)="sortRidesBy()" style="max-width: 300px;" class="form-control">
             <option *ngFor="let filter of sortByFilter" [value]="filter" >{{ filter }}</option>
         </select>
@@ -36,6 +27,4 @@
             <app-lyft-prices *ngFor="let offer of lyftFares?.offers" [lyftRideDetails]="offer" ></app-lyft-prices>
         </div>
     </div>
-
-    <h2 *ngIf="!uberFaresResponse && !lyftFares && noAvailableDeals">No Rides Available</h2>
 </div>
