@@ -10,3 +10,7 @@ export class AddressDetails{
     id = "";
     placeType = "";
  }
+
+ export class Data{
+    data: AddressDetails = new AddressDetails();
+ }

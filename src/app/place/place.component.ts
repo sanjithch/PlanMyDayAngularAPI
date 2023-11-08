@@ -3,6 +3,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AddressDetails } from '../Models/Location';
 import { LocationData } from '../Models/CurrentLocationClass';
+import { WholeJourneyService } from '../whole-journey.service';
 
 @Component({
   selector: 'app-place',
@@ -14,14 +15,67 @@ export class PlaceComponent implements OnInit {
   @Output() sendDataToParent = new EventEmitter<AddressDetails>();
   address: string = " ";
   foraddresses : responseForAddress[] = [];
-  response: any;
+  response: AddressDetails = new AddressDetails;
   currentCoOrdinated : CoOrdinates  = new CoOrdinates();
   currentLocation : LocationData = new LocationData();
 
+  tempCoOrdinates : CoOrdinates  = new CoOrdinates();
 
-  constructor(private http : HttpClient) { }
+
+  constructor(private http : HttpClient, private wholeJourneyService : WholeJourneyService) { }
 
   ngOnInit(): void {
+    if(this.placeType!=='From'){
+      if(this.placeType=='Pickup'){
+        this.response = this.wholeJourneyService.traveDetails.from.data;
+        // this.mapHelper(this.wholeJourneyService.traveDetails.to.addressDetails);
+        console.log('assigned in pick up...................................');
+        console.log(this.wholeJourneyService.traveDetails);
+        console.log(this.wholeJourneyService.traveDetails.from?.data);
+        this.foraddresses.push(new responseForAddress(this.wholeJourneyService.traveDetails.from.data?.id, this.wholeJourneyService.traveDetails.from.data.addressLine1+this.wholeJourneyService.traveDetails.from.data.addressLine2));
+        console.log('assigned in pick up...................................');
+      }
+      else if(this.placeType=='Destination'){
+        this.response = this.wholeJourneyService.traveDetails.to.data;
+        // this.mapHelper(this.wholeJourneyService.traveDetails.to.addressDetails);
+        console.log('assigned in Destination...................................');
+        console.log("this.response.." + this.response);
+        console.log(this.wholeJourneyService.traveDetails)
+        this.foraddresses.push(new responseForAddress(this.response.id, this.response.addressLine1+this.response.addressLine2));
+        console.log('assigned in Destination...................................');
+      }
+      else if(this.placeType=='Pickup Airport'){
+        this.tempCoOrdinates.latitude = this.wholeJourneyService.traveDetails.from.data.lat;
+        this.tempCoOrdinates.longitude = this.wholeJourneyService.traveDetails.from.data.long;
+        this.helperForFetchAddresses();
+      }
+      else if(this.placeType=='Destination Airport'){
+        this.tempCoOrdinates.latitude = this.wholeJourneyService.traveDetails.to.data.lat;
+        this.tempCoOrdinates.longitude = this.wholeJourneyService.traveDetails.to.data.long;
+        this.helperForFetchAddresses();
+      }
+    }
+  }
+
+
+  // mapHelper(wholeJourneyService: AddressDetails){
+  //   this.response.addressLine1 = wholeJourneyService.addressLine1;
+  //   this.response.addressLine2 = wholeJourneyService.addressLine2;
+  //   this.response.fullAddress = wholeJourneyService.fullAddress;
+  //   this.response.title = wholeJourneyService.title;
+  //   this.response.provider = wholeJourneyService.provider;
+  //   this.response.lat = wholeJourneyService.lat;
+  //   this.response.long = wholeJourneyService.long;
+  //   this.response.type = wholeJourneyService.type;
+  //   this.response.id = wholeJourneyService.id;
+  //   this.response.placeType = wholeJourneyService.placeType;
+  // }
+
+  async helperForFetchAddresses(){
+    await this.http.post<responseForAddress[]>(environment.NearByAirports, this.tempCoOrdinates).subscribe(data => this.foraddresses = data);
+          setTimeout(() =>{
+            console.log(this.foraddresses);
+          }, 500);
   }
 
   sendData(){
@@ -50,8 +104,6 @@ export class PlaceComponent implements OnInit {
     var dropDown = document.getElementById("addressDropdown"+this.placeType) as HTMLSelectElement;
     var selectedElement = dropDown.value;
     console.log(selectedElement);
-    
-    //https://localhost:7066/api/Uber/selectingAdress
     
     await this.http.get<AddressDetails>(environment.uberCoordinatesFetchURL + selectedElement).subscribe(data => this.response = data);
     setTimeout(() =>{
@@ -98,7 +150,6 @@ export class PlaceComponent implements OnInit {
   }
   
 }
-
 
 export class responseForAddress{
   id = "";

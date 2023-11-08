@@ -24,6 +24,10 @@ export class AppComponent {
     // console.log(this.response);
   }
 
+  gotDataFromChild(event: any){
+    console.log(event);
+  }
+
 
   
 }

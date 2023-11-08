@@ -1,6 +1,6 @@
-import { AddressDetails } from "./Location"
+import { Data } from "./Location"
 
 export class TravelDetails {
-     to: AddressDetails = new AddressDetails
-    from: AddressDetails = new AddressDetails
+     to: Data = new Data
+    from: Data = new Data
 }

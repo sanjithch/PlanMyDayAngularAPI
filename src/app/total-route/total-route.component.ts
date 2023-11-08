@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { WholeJourneyService } from '../whole-journey.service';
 
 @Component({
   selector: 'app-total-route',
@@ -7,13 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TotalRouteComponent implements OnInit {
 
-  constructor() { }
+  constructor(private wholeJouneryService: WholeJourneyService) { }
 
   ngOnInit(): void {
-  }
-
-  receiveDataFromChild(event: any){
-
   }
 
 }

@@ -1,10 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TravelDetails } from '../Models/TravelDetails';
 import { AddressDetails } from '../Models/Location';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Product, ResponseFromUberFares } from '../Models/ResponseFromUberFares';
+import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
 import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
+import { Router } from '@angular/router';
+import { WholeJourneyService } from '../whole-journey.service';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -15,6 +17,7 @@ export class TravelPlanDetailsComponent implements OnInit {
   traveldetails: any;
   @Input() pickUp = 'From';
   @Input() Destination = 'To';
+  @Output() sendDataToApp = new EventEmitter<AddressDetails>();
 
   //responses from uber
   pickUpNearByAirport : ResponseFromUberFares | undefined;
@@ -26,10 +29,27 @@ export class TravelPlanDetailsComponent implements OnInit {
   sortByFilter = ['price', 'duriation','Time of Arrival'];
   noAvailableDeals = false;
 
-  constructor(private httpclient : HttpClient) {}
+  constructor(private httpclient : HttpClient, private router: Router, private wholeJouneryService: WholeJourneyService) {
+    if(this.wholeJouneryService.traveDetails){
+      console.log("Assigning values to and from");
+      this.traveldetails = this.wholeJouneryService.traveDetails;
+    }
+  }
 
   ngOnInit(): void {
     this.traveldetails = new TravelDetails();
+    if(this.wholeJouneryService.addedAirport){
+      console.log("data from service");
+      console.log(this.wholeJouneryService.traveDetails);
+    }
+    if(this.pickUp!=='From'){
+      if(this.pickUp==='Pickup') this.traveldetails = this.wholeJouneryService.FromToPickUpAirPorts;
+      else if(this.pickUp==='Pickup Airport') this.traveldetails = this.wholeJouneryService.PickUpAirportToDestinationAirport;
+      else if(this.pickUp==='Destination Airport') this.traveldetails = this.wholeJouneryService.DestinationAirportToDestination;
+      console.log("in pick up");
+      console.log(this.traveldetails);
+      console.log("in pick up");
+    }
   }
 
   receiveDataFromChild(response: AddressDetails){
@@ -59,6 +79,15 @@ export class TravelPlanDetailsComponent implements OnInit {
       console.log(this.body);
       await this.httpclient.post<ResponseFromUberFares>(environment.uberFares, this.body).subscribe(data => {
         this.uberFaresResponse = data;
+        console.log("assinged uber fares...");
+        if(!this.uberFaresResponse?.data){
+          if(this.pickUp='From'){
+            this.wholeJouneryService.traveDetails = this.traveldetails;
+            this.wholeJouneryService.addedAirport = true;
+            this.wholeJouneryService.getMeNearByAirPorts();
+            this.router.navigate(['/includes-airport']);
+          }
+        }
       })
 
       await this.httpclient.post<ResponseFromLyftFares>(environment.lyftFares, this.body).subscribe(data => {

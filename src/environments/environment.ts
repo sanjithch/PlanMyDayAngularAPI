@@ -8,7 +8,10 @@ export const environment = {
   uberCoordinatesFetchURL: 'https://localhost:7066/api/Uber/selectingAdress/',
   uberFares: 'https://localhost:7066/api/Uber/getFaresFromUber',
   uberCurrentLocation: 'https://localhost:7066/api/Uber/getMyCurrentLocation',
-  lyftFares: 'https://localhost:7066/api/Lyft/getFaresFromLyft'
+  lyftFares: 'https://localhost:7066/api/Lyft/getFaresFromLyft',
+  NearByAirports : 'https://localhost:7066/api/Uber/getMeNearByAirport',
+  NearByRestaurants: 'https://localhost:7066/api/Uber/getMeNearByRestaurants',
+  NearByMcDonalds: 'https://localhost:7066/api/Uber/getMeNearByMCDonalds'
 };
 
 /*
