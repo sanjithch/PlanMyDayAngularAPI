@@ -1,9 +1,32 @@
-<span>
+<span class="w-100">
     <h3 style="width: 300px;"> <label for = {{placeType}} class="form-label"> {{ placeType }} </label>  </h3>
-    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control" style="width: 280px;">
+    <input [(ngModel)]="address" id={{placeType}} name={{placeType}} (change)="fetchAddress()" class="form-control">
     <span (click)="getMyLocation()">Loc</span>
     
-    <select class="form-control" id={{getId()}} (click)="getAddressesCoordinates()" style="width: 300px;">
+    <select class="form-control" id={{getId()}} (click)="getAddressesCoordinates()">
         <option *ngFor="let suggestion of foraddresses" value={{suggestion.id}}> {{ suggestion.address }}</option>
     </select>
 </span>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-success my-4 w-100" (click)="changeYourRequest()">
+    Search For Food
+  </button>
+  
+  <!-- Modal -->
+  <div *ngIf="requestedForFood">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+            <button type="button" class="btn btn-primary mx-4" (click)="getMeFood('restaurants')">Restaurants</button>
+            <button type="button" class="btn btn-primary mx-4" (click)="getMeFood('mcDonalds')">MCDonalds</button>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <select class="form-control" class="m-4" style="width: 300px;">
+                <option *ngFor="let suggestion of restaurantsaddresses" value={{suggestion.id}}> {{ suggestion.address }}</option>
+            </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  

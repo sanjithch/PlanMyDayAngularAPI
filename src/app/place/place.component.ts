@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { AddressDetails } from '../Models/Location';
+import { AddressDetails, Data } from '../Models/Location';
 import { LocationData } from '../Models/CurrentLocationClass';
 import { WholeJourneyService } from '../whole-journey.service';
 
@@ -15,11 +15,14 @@ export class PlaceComponent implements OnInit {
   @Output() sendDataToParent = new EventEmitter<AddressDetails>();
   address: string = " ";
   foraddresses : responseForAddress[] = [];
+  restaurantsaddresses : responseForAddress[] = [];
   response: AddressDetails = new AddressDetails;
+  responseDup: any;
   currentCoOrdinated : CoOrdinates  = new CoOrdinates();
   currentLocation : LocationData = new LocationData();
-
+  isItCurrentLocation: boolean = false;
   tempCoOrdinates : CoOrdinates  = new CoOrdinates();
+  requestedForFood : boolean = false;
 
 
   constructor(private http : HttpClient, private wholeJourneyService : WholeJourneyService) { }
@@ -34,6 +37,8 @@ export class PlaceComponent implements OnInit {
         console.log(this.wholeJourneyService.traveDetails.from?.data);
         this.foraddresses.push(new responseForAddress(this.wholeJourneyService.traveDetails.from.data?.id, this.wholeJourneyService.traveDetails.from.data.addressLine1+this.wholeJourneyService.traveDetails.from.data.addressLine2));
         console.log('assigned in pick up...................................');
+        this.currentCoOrdinated.latitude = this.wholeJourneyService.traveDetails.from.data.lat;
+        this.currentCoOrdinated.longitude = this.wholeJourneyService.traveDetails.from.data.long;
       }
       else if(this.placeType=='Destination'){
         this.response = this.wholeJourneyService.traveDetails.to.data;
@@ -41,35 +46,48 @@ export class PlaceComponent implements OnInit {
         console.log('assigned in Destination...................................');
         console.log("this.response.." + this.response);
         console.log(this.wholeJourneyService.traveDetails)
+        this.currentCoOrdinated.latitude = this.wholeJourneyService.traveDetails.to.data.lat;
+        this.currentCoOrdinated.longitude = this.wholeJourneyService.traveDetails.to.data.long;
         this.foraddresses.push(new responseForAddress(this.response.id, this.response.addressLine1+this.response.addressLine2));
         console.log('assigned in Destination...................................');
       }
       else if(this.placeType=='Pickup Airport'){
         this.tempCoOrdinates.latitude = this.wholeJourneyService.traveDetails.from.data.lat;
         this.tempCoOrdinates.longitude = this.wholeJourneyService.traveDetails.from.data.long;
+        this.currentCoOrdinated.latitude = this.tempCoOrdinates.latitude;
+        this.currentCoOrdinated.longitude = this.tempCoOrdinates.longitude;
         this.helperForFetchAddresses();
       }
       else if(this.placeType=='Destination Airport'){
         this.tempCoOrdinates.latitude = this.wholeJourneyService.traveDetails.to.data.lat;
         this.tempCoOrdinates.longitude = this.wholeJourneyService.traveDetails.to.data.long;
+        this.currentCoOrdinated.latitude = this.tempCoOrdinates.latitude;
+        this.currentCoOrdinated.longitude = this.tempCoOrdinates.longitude;
         this.helperForFetchAddresses();
       }
     }
   }
 
+  changeYourRequest(){
+    this.requestedForFood = !this.requestedForFood;
+  }
 
-  // mapHelper(wholeJourneyService: AddressDetails){
-  //   this.response.addressLine1 = wholeJourneyService.addressLine1;
-  //   this.response.addressLine2 = wholeJourneyService.addressLine2;
-  //   this.response.fullAddress = wholeJourneyService.fullAddress;
-  //   this.response.title = wholeJourneyService.title;
-  //   this.response.provider = wholeJourneyService.provider;
-  //   this.response.lat = wholeJourneyService.lat;
-  //   this.response.long = wholeJourneyService.long;
-  //   this.response.type = wholeJourneyService.type;
-  //   this.response.id = wholeJourneyService.id;
-  //   this.response.placeType = wholeJourneyService.placeType;
-  // }
+  // getting near by restaurants and mcdonalds
+  async getMeFood(type: string){
+    if(type==='restaurants'){
+      console.log(this.tempCoOrdinates);
+      await this.http.post<responseForAddress[]>(environment.NearByRestaurants, this.currentCoOrdinated).subscribe(data => this.restaurantsaddresses = data);
+      setTimeout(() =>{
+        console.log(this.restaurantsaddresses);
+      }, 500);
+    }
+    else if(type==='mcDonalds'){
+      await this.http.post<responseForAddress[]>(environment.NearByMcDonalds, this.currentCoOrdinated).subscribe(data => this.restaurantsaddresses = data);
+      setTimeout(() =>{
+      console.log(this.foraddresses);
+      }, 500);
+    }
+  }
 
   async helperForFetchAddresses(){
     await this.http.post<responseForAddress[]>(environment.NearByAirports, this.tempCoOrdinates).subscribe(data => this.foraddresses = data);
@@ -79,7 +97,6 @@ export class PlaceComponent implements OnInit {
   }
 
   sendData(){
-    console.log("data sent");
     this.sendDataToParent.emit(this.response);
   }
 
@@ -91,10 +108,13 @@ export class PlaceComponent implements OnInit {
   async fetchAddress(){
     console.log("for Address");
     console.log(this.address);
+    if(this.placeType==="Pickup Airport") this.wholeJourneyService.pickUPAirportUberAPIChange = this.address;
+    if(this.placeType==="Destination Airport") this.wholeJourneyService.destinationAirportUberAPIChange = this.address;
 
     await this.http.get<responseForAddress[]>(environment.uberAddressFetchURL + this.address).subscribe(data => this.foraddresses = data);
     setTimeout(() =>{
       console.log(this.foraddresses);
+
     }, 500);
   }
 
@@ -109,15 +129,22 @@ export class PlaceComponent implements OnInit {
     setTimeout(() =>{
       this.response.placeType = this.placeType;
       console.log(this.response);
+      this.responseDup = this.response;
+      
       setTimeout(() =>{
         this.sendData();
       }, 500);
+      if(!this.isItCurrentLocation){
+        this.currentCoOrdinated.latitude = this.responseDup?.data.lat;
+        this.currentCoOrdinated.longitude = this.responseDup?.data.long
+      }
     }, 500);
       // await this.getAddresses<
   }
 
   // get my current Location using navigator library
   async getMyLocation(){
+    this.isItCurrentLocation = true;
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(async (position)=> {
         this.currentCoOrdinated.latitude = position.coords.latitude;
@@ -137,8 +164,6 @@ export class PlaceComponent implements OnInit {
       (err)=> console.log(err.message))
     }
   }
-
-  // P.S. My web app is hosted on my PC's localhost and I've connected my phone to my PC's hotspot to access the localhost. Also, I'm using a Huawei Mate 20 Pro.
 
   mapCurrentLocationToAddress(){
     console.log("at time");

@@ -4,27 +4,38 @@
         <span class="spacer" style="flex-grow: 2;"></span>
         <app-place [placeType]="Destination" (sendDataToParent)="receiveDataFromChild($event)" style="flex-grow: 1;"> </app-place>
     </div>
-
-    <div *ngIf="this.noAvailableDeals"> 
-       <h4 class="text-warning mx-4"> No Direct Rides Available Select Options for connecting flight </h4> 
-    </div>
     
     <div style="display: flex;" class="my-4">
         <button type="submit" (click)="onSubmit()" class="btn form-control btn-primary" >Explore</button>
         <h4 class="mx-4" style="min-width: 150px">Sort By </h4>
-        <select id="sortBy" (click)="sortRidesBy()" style="max-width: 300px;" class="form-control">
+        <select *ngIf="!isFlight" id="sortBy" (click)="sortRidesBy()" style="max-width: 300px;" class="form-control">
             <option *ngFor="let filter of sortByFilter" [value]="filter" >{{ filter }}</option>
         </select>
     </div>
 
-    <div style="display: flex;">
+    <div style="display: flex;" *ngIf="!isFlight">
         <div *ngIf="uberFaresResponse !== undefined" class="border border-dark" style="min-width: 450px;">
             <h2>Uber</h2>
-            <app-ride-details *ngFor="let product of uberFaresResponse.data.products.tiers[0].products" [rideDetails] ="product" ></app-ride-details>
+            <app-ride-details *ngFor="let product of uberFaresResponse.data.products.tiers[0].products" [rideDetails] ="product" (click)="giveDetails(product, 'Uber')"></app-ride-details>
         </div>
         <div *ngIf="lyftFares !== undefined" class="border border-dark" style="min-width: 450px;">
             <h2>Lyft</h2>
-            <app-lyft-prices *ngFor="let offer of lyftFares?.offers" [lyftRideDetails]="offer" ></app-lyft-prices>
+            <app-lyft-prices *ngFor="let offer of lyftFares?.offers" [lyftRideDetails]="offer" (click)="giveDetails(offer, 'Lyft')"></app-lyft-prices>
         </div>
     </div>
+
+    <div *ngIf="isFlight">
+        <div class="d-flex">
+            <h2 class="mx-2">Travel on</h2>
+            <input type="date" [(ngModel)]="date" class="form-control date"/>
+        </div>
+        <div *ngIf="flightsAvailable?.data?.searchResults?.airProducts" class="d-flex">
+            <app-flight-details  *ngFor="let detail of flightsAvailable?.data?.searchResults?.airProducts" [airProducts]="detail"></app-flight-details>
+        </div>        
+    </div>
+
+    <div *ngIf="!isFlight" class="bg-info">
+        <h2>Cost <span class="float-right">{{price}}</span></h2> 
+    </div>
+
 </div>

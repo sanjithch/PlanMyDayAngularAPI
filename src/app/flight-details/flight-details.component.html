@@ -1,0 +1,73 @@
+<select id="sortBy" (click)="sortRidesBy()" style="max-width: 300px;" class="form-control">
+    <option *ngFor="let filter of sortByFilter" [value]="filter" >{{ filter }}</option>
+</select>
+<table class="table table-hover" id="available-flights" style="width: 1000px;">
+    <tr>
+        <th>
+            <h3>Origin</h3>
+        </th>
+        <th>
+            <h3> Stops </h3>
+        </th>
+        <th>
+            <h3>Destination</h3>
+        </th>
+        <th colspan="4">
+            <h3>Prices</h3>
+            <div>
+                <span class="h4 mx-2 p-2 badge-success">WGA</span>
+                <span class="h4 mx-2 badge-primary">BUS</span>
+                <span class="h4 mx-2 badge-secondary">PLU</span>
+                <span class="h4 mx-2 badge-info">ANY</span>
+            </div>
+        </th>
+    </tr>
+    <tr *ngFor="let detail of airProducts.details">
+        <td>
+            <h3>{{detail.originationAirportCode}} - <span *ngFor="let fn of detail.flightNumbers">{{fn}}/</span></h3>
+            <h6>Departure Time - {{detail.departureTime}}</h6>
+        </td>
+        <td>
+            <div class="mx-2" *ngFor="let segment of detail.segments">
+                <h4>{{segment.flightNumber}} </h4>
+                <h6>{{segment.originationAirportCode}} - {{segment.destinationAirportCode}}</h6>
+            </div>
+        </td>
+        <td>
+            <h3>{{detail.destinationAirportCode}}</h3>
+            <h6>Arrival Time - {{detail.arrivalTime}}</h6>
+        </td>
+        <td colspan="4">
+            <h4 (click)="selectFlight(detail, 'WGA')" class="badge badge-success w-20 mr-1 p-3">   {{detail.fareProducts.ADULT.WGA.availabilityStatus==='SOLD_OUT' ? 'NA' : detail.fareProducts.ADULT.WGA.fare.totalFare.value}}</h4>
+            <h4 (click)="selectFlight(detail, 'BUS')" class="badge badge-primary w-20 mr-1 p-3">   {{detail.fareProducts.ADULT.BUS.availabilityStatus==='SOLD_OUT' ? 'NA' : detail.fareProducts.ADULT.BUS.fare.totalFare.value}}</h4>
+            <h4 (click)="selectFlight(detail, 'PLU')" class="badge badge-secondary w-20 mr-1 p-3"> {{detail.fareProducts.ADULT.PLU.availabilityStatus==='SOLD_OUT' ? 'NA' : detail.fareProducts.ADULT.PLU.fare.totalFare.value}}</h4>
+            <h4 (click)="selectFlight(detail, 'ANY')" class="badge badge-info w-20 mr-1 p-3">      {{detail.fareProducts.ADULT.ANY.availabilityStatus==='SOLD_OUT' ? 'NA' : detail.fareProducts.ADULT.ANY.fare.totalFare.value}}</h4>
+        </td>
+    </tr>
+</table>
+
+<h2 class="bg-info">Cost <span class="float-right">$ {{this.wholeJourneyService.airplaneCharges}}</span></h2> 
+
+
+
+
+
+<!-- <div>
+    <div *ngFor="let detail of airProducts.details" class="d-flex">
+        <div class="mx-2">
+            <h3>{{detail.originationAirportCode}} - <span *ngFor="let fn of detail.flightNumbers">{{fn}}/</span></h3>
+            <h6>Departure Time - {{detail.departureTime}}</h6>
+        </div>
+        <div class="mx-2" *ngFor="let segment of detail.segments">
+            <h4>{{segment.flightNumber}} </h4>
+            <h6>{{segment.originationAirportCode}} - {{segment.destinationAirportCode}}</h6>
+        </div>
+        <div class="mx-2">
+            <h3>{{detail.destinationAirportCode}}</h3>
+            <h6>Arrival Time - {{detail.arrivalTime}}</h6>
+        </div>
+        <div>
+            <div></div>
+        </div>
+    </div> 
+</div> -->

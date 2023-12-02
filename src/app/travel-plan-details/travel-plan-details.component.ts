@@ -3,10 +3,12 @@ import { TravelDetails } from '../Models/TravelDetails';
 import { AddressDetails } from '../Models/Location';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ResponseFromUberFares } from '../Models/ResponseFromUberFares';
-import { ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
+import { Product, ResponseFromUberFares } from '../Models/ResponseFromUberFares';
+import { Offer, ResponseFromLyftFares } from '../Models/ResponseFromLyftFares';
 import { Router } from '@angular/router';
 import { WholeJourneyService } from '../whole-journey.service';
+import { AllFightsDetails } from '../Models/FlightDetails';
+import { RequestForFlightDetails } from '../Models/RequestForflights';
 
 @Component({
   selector: 'app-travel-plan-details',
@@ -23,11 +25,19 @@ export class TravelPlanDetailsComponent implements OnInit {
   pickUpNearByAirport : ResponseFromUberFares | undefined;
   destinationNearByAirport: ResponseFromUberFares | undefined;
   uberFaresResponse : ResponseFromUberFares | undefined;
+  flightsAvailable: AllFightsDetails | undefined
+  isFlight : boolean = false;
+  date : Date = new Date;
+  bodyForFilghtsRequest : RequestForFlightDetails = new RequestForFlightDetails;
+  fromFlight = '';
+  toFlight = '';
+  gotFrom = false;
 
   body : requestBodyForFares  = new requestBodyForFares;
   lyftFares : ResponseFromLyftFares | undefined;
   sortByFilter = ['price', 'duriation','Time of Arrival'];
   noAvailableDeals = false;
+  price : any;
 
   constructor(private httpclient : HttpClient, private router: Router, private wholeJouneryService: WholeJourneyService) {
     if(this.wholeJouneryService.traveDetails){
@@ -38,6 +48,9 @@ export class TravelPlanDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.traveldetails = new TravelDetails();
+    if(this.wholeJouneryService.currentUser===""){
+      this.router.navigate(['/login']);
+    }
     if(this.wholeJouneryService.addedAirport){
       console.log("data from service");
       console.log(this.wholeJouneryService.traveDetails);
@@ -50,21 +63,60 @@ export class TravelPlanDetailsComponent implements OnInit {
       console.log(this.traveldetails);
       console.log("in pick up");
     }
+    if(this.pickUp==='Pickup Airport' && this.Destination==='Destination Airport'){
+      console.log("Hiiii from flights..........");
+      console.log(this.traveldetails);
+      this.isFlight = true;
+      console.log(this.isFlight);
+    }
   }
 
   receiveDataFromChild(response: AddressDetails){
     console.log("In the parent");
-    if(response.placeType==="From"){
+    if(response.placeType===this.pickUp){       
       this.traveldetails.from = response;
     }
-    if(response.placeType==="To"){
+    if(response.placeType===this.Destination){
       this.traveldetails.to = response;
     }
     console.log(response);
   }
 
   async onSubmit(){
-    this.getMeOffers();
+    this.wholeJouneryService.traveDetails = this.traveldetails; 
+    console.log("....in submit............");
+    console.log(this.traveldetails);
+    if(this.pickUp==='Pickup Airport') this.wholeJouneryService.PickUpAirportToDestinationAirport = this.traveldetails;
+    if(!this.isFlight) this.getMeOffers();
+    else this.getMeFlights();
+  }
+
+  async getMeFlights(){
+    console.log(this.date);
+    this.bodyForFilghtsRequest.date = this.date.toString();
+    console.log("for flights....");
+    this.fromFlight = this.traveldetails.from?.data?.addressLine1.slice(-5).substring(1,4);
+    console.log(this.fromFlight);
+
+    this.toFlight = this.traveldetails.to?.data?.addressLine1.slice(-5).substring(1,4);
+    if(this.pickUp==="Pickup Airport" && this.Destination==="Destination Airport"){
+      console.log("......update the from and to flight......")
+      this.fromFlight = this.wholeJouneryService.destinationAirportUberAPIChange;
+      this.toFlight = this.wholeJouneryService.pickUPAirportUberAPIChange;
+    }
+    console.log(this.toFlight);
+    this.bodyForFilghtsRequest.From = this.fromFlight;
+    this.bodyForFilghtsRequest.To = this.toFlight;
+    console.log("body for flight request ............")
+    console.log(this.bodyForFilghtsRequest)
+
+    await this.httpclient.post<AllFightsDetails>(environment.SouthWestFlights+"?date="+this.bodyForFilghtsRequest.date+"&From="+this.bodyForFilghtsRequest.From+"&To="+this.bodyForFilghtsRequest.To, this.bodyForFilghtsRequest).subscribe(data => { this.flightsAvailable = data });
+    setTimeout(()=>{
+      console.log('................available flights...........');
+      console.log(this.flightsAvailable);
+      console.log("....all air products......");
+      console.log(this.flightsAvailable?.data?.searchResults);
+    }, 3000);
   }
 
   async getMeOffers(){
@@ -113,39 +165,61 @@ export class TravelPlanDetailsComponent implements OnInit {
   }
   
   sortRidesBy(){
-    var selectElement = document.getElementById("sortBy") as HTMLSelectElement;
-    var sortingBy = selectElement.value;
-    console.log("....sorting by..."+sortingBy);
-    if(sortingBy==='price'){
-      console.log("......sorting....based....price.....");
-        this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b)=>{
-         return parseFloat(a.fare.substring(1)) - parseFloat(b.fare.substring(1));
-        })
-
+    if(!this.isFlight){
+      var selectElement = document.getElementById("sortBy") as HTMLSelectElement;
+      var sortingBy = selectElement.value;
+      console.log("....sorting by..."+sortingBy);
+      if(sortingBy==='price'){
+        console.log("......sorting....based....price.....");
+          this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b)=>{
+           return parseFloat(a.fare.substring(1)) - parseFloat(b.fare.substring(1));
+          })
+  
+          this.lyftFares?.offers.sort((a,b)=>{
+            return parseInt(a.cost_estimate.estimated_cost_cents_max) - parseInt(b.cost_estimate.estimated_cost_cents_max);
+          })
+      }
+      else if(sortingBy==='duriation'){
+        console.log("......sorting....based....duriation.....");
+        this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
+         a.estimatedTripTime - b.estimatedTripTime
+         )
+  
         this.lyftFares?.offers.sort((a,b)=>{
-          return parseInt(a.cost_estimate.estimated_cost_cents_max) - parseInt(b.cost_estimate.estimated_cost_cents_max);
+          return parseInt(a.ride_travel_details.dropoff_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
         })
+      }
+      else if(sortingBy==='Time of Arrival'){
+        console.log("......sorting....based....Time of Arrival.....");
+        this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
+         parseInt(a.etaStringShort.substring(0, a.etaStringShort.length-5)) - parseInt(b.etaStringShort.substring(0, b.etaStringShort.length-5))
+         )
+  
+        this.lyftFares?.offers.sort((a,b)=>{
+          return parseInt(a.ride_travel_details.pickup_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.pickup_estimate.duration_range.duration_ms);
+        })
+      }
     }
-    else if(sortingBy==='duriation'){
-      console.log("......sorting....based....duriation.....");
-      this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
-       a.estimatedTripTime - b.estimatedTripTime
-       )
+  }
 
-      this.lyftFares?.offers.sort((a,b)=>{
-        return parseInt(a.ride_travel_details.dropoff_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.dropoff_estimate.duration_range.duration_ms);
-      })
+  giveDetails(selectedProduct : any, rideType : string){
+    if(rideType==='Uber'){
+     this.price = parseFloat((selectedProduct as Product).fare.substring(1));
+     this.wholeJouneryService.onlyOneTripPrice = this.price;
     }
-    else if(sortingBy==='Time of Arrival'){
-      console.log("......sorting....based....Time of Arrival.....");
-      this.uberFaresResponse?.data.products.tiers[0].products.sort((a,b) => 
-       parseInt(a.etaStringShort.substring(0, a.etaStringShort.length-5)) - parseInt(b.etaStringShort.substring(0, b.etaStringShort.length-5))
-       )
-
-      this.lyftFares?.offers.sort((a,b)=>{
-        return parseInt(a.ride_travel_details.pickup_estimate.duration_range.duration_ms)- parseInt(b.ride_travel_details.pickup_estimate.duration_range.duration_ms);
-      })
+    else{
+      this.price = parseInt(((selectedProduct as Offer).cost_estimate.estimated_cost_cents_max))/100;
+      this.wholeJouneryService.onlyOneTripPrice = this.price;
     }
+    if(this.Destination === 'Pickup Airport'){
+      this.wholeJouneryService.toPickUpAirport = this.price;
+      this.wholeJouneryService.updatePrice();
+    }
+    else if(this.Destination==="Destination"){
+      this.wholeJouneryService.toDestinationAirport = this.price;
+      this.wholeJouneryService.updatePrice();
+    }
+    // this.wholeJouneryService.updatePrice();
   }
 
 }

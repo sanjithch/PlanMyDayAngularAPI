@@ -17,6 +17,11 @@ import { RideDetailsComponent } from './ride-details/ride-details.component';
 import { LyftPricesComponent } from './lyft-prices/lyft-prices.component';
 import { TotalRouteComponent } from './total-route/total-route.component';
 import { ROUTES, Router, RouterModule } from '@angular/router';
+import { FlightDetailsComponent } from './flight-details/flight-details.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { MyTripsComponent } from './my-trips/my-trips.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TripDetailsComponent } from './trip-details/trip-details.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +30,11 @@ import { ROUTES, Router, RouterModule } from '@angular/router';
     PlaceComponent,
     RideDetailsComponent,
     LyftPricesComponent,
-    TotalRouteComponent
+    TotalRouteComponent,
+    FlightDetailsComponent,
+    LoginPageComponent,
+    MyTripsComponent,
+    TripDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -34,9 +43,12 @@ import { ROUTES, Router, RouterModule } from '@angular/router';
     MatDatepickerModule, MatNativeDateModule, 
     HttpClientModule, BrowserAnimationsModule,
     FormsModule, ReactiveFormsModule,
+    MatSnackBarModule,
     RouterModule.forRoot([
       {path: '', component: TravelPlanDetailsComponent},
       {path: 'includes-airport', component: TotalRouteComponent},
+      {path: 'login', component: LoginPageComponent},
+      {path: 'mytrips', component: MyTripsComponent},
     ])
   ],
   providers: [HttpClient],

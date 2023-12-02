@@ -1,0 +1,4 @@
+#available-flights tr:hover{
+    background-color: rgb(255, 0, 170);
+    cursor: pointer;
+}

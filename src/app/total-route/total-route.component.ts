@@ -8,7 +8,7 @@ import { WholeJourneyService } from '../whole-journey.service';
 })
 export class TotalRouteComponent implements OnInit {
 
-  constructor(private wholeJouneryService: WholeJourneyService) { }
+  constructor(public wholeJouneryService: WholeJourneyService) { }
 
   ngOnInit(): void {
   }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '../Models/ResponseFromUberFares';
+import { WholeJourneyService } from '../whole-journey.service';
 
 @Component({
   selector: 'app-ride-details',
@@ -17,5 +18,4 @@ export class RideDetailsComponent implements OnInit {
   getMinutes(val: number){
     return Math.round(val/60);
   }
-
 }

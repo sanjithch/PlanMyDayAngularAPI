@@ -297,13 +297,14 @@
 <div class="toolbar" role="banner" >
   <span class="ml-4">San Application</span>
   <div class="spacer"></div>
+  
 </div>
 
-<!-- <app-travel-plan-details> Hii </app-travel-plan-details> -->
+<h1 class="text-center text-primary" style="margin-top: 100px;" *ngIf="wholeJounreyService.currentUser!==''">Hi {{wholeJounreyService.currentUser}}.....</h1>
+<div style="text-align: center;">
+  <a *ngIf="wholeJounreyService.currentUser!==''" (click)="navigateMetoMyTrips()">Show-mytrips</a>
+</div>
 <router-outlet></router-outlet>
-
-<!-- <button (click)="getResponse()" > For heck</button>
-
-  <div *ngFor="let res of response | async" >
-    {{ res | json}}
-  </div> -->
+<div style="text-align: center;">
+  <button class="btn btn-primary" *ngIf="wholeJounreyService.currentUser!==''" (click)="addItToDB()">Add to my trips</button>
+</div>

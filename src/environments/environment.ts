@@ -11,7 +11,8 @@ export const environment = {
   lyftFares: 'https://localhost:7066/api/Lyft/getFaresFromLyft',
   NearByAirports : 'https://localhost:7066/api/Uber/getMeNearByAirport',
   NearByRestaurants: 'https://localhost:7066/api/Uber/getMeNearByRestaurants',
-  NearByMcDonalds: 'https://localhost:7066/api/Uber/getMeNearByMCDonalds'
+  NearByMcDonalds: 'https://localhost:7066/api/Uber/getMeNearByMCDonalds',
+  SouthWestFlights: 'https://localhost:7066/getMeFlightsFromAirports'
 };
 
 /*

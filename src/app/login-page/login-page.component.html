@@ -1,0 +1,46 @@
+<div class="container h-100" style="margin-top: 100px;">
+    <div class="d-flex justify-content-center h-100">
+        <div class="user_card">
+            <h5 class="text-center text-primary">Welcome to san Application</h5>
+            <h5 class="text-center" *ngIf="isLogin">Login</h5>
+            <h5 class="text-center" *ngIf="!isLogin">SignUp</h5>
+            <div class="d-flex justify-content-center form_container">
+                <form>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" [(ngModel)]="userName" name="userName" class="form-control input_user" (change)="printUserAndPas()" value="" placeholder="username" minlength="5" required>
+                        <!-- <input type="text" [(ngModel)]="userName" *ngIf="!isLogin" name="userName" class="form-control input_user" value={{userName}} (change)="printUserAndPas()" placeholder="username"> -->
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                        </div>
+                        <input type="password" [(ngModel)]="password" name="password" class="form-control input_pass" (change)="printUserAndPas()" value="" placeholder="password" required>
+                        
+                    </div>
+                    <!-- <div  >should have one !,@,#,$,%</div> -->
+                    <ul *ngIf="passwordErrorMessage" class="text-danger">
+                        <li>should have one !,@,#,$,%</li>
+                        <li>Should have one number</li>
+                    </ul>
+                    <div class="d-flex justify-content-center mt-3 login_container">
+                        <button type="submit" *ngIf="isLogin" name="button" class="btn login_btn" (click)="logIn()">Login</button>
+                        <button type="submit" *ngIf="!isLogin" name="button" class="btn login_btn" (click)="SignUp()">SignUp</button>
+                    </div>
+                </form>
+            </div>
+    
+            <div class="mt-4">
+                <div *ngIf="isLogin" class="d-flex justify-content-center links">
+                    Don't have an account? <a class="ml-2" (click)="changeToSignUp()">Sign Up</a>
+                </div>
+                <div *ngIf="!isLogin" class="d-flex justify-content-center links">
+                    Already have an account? <a class="ml-2" (click)="changeToLogin()">Log In</a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
